@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["ES2022"],
+    "lib": [
+      "ES2022"
+    ],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "outDir": "dist",
@@ -19,8 +21,15 @@
     "useUnknownInCatchVariables": true,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   },
-  "include": ["src/**/*.ts", "test/**/*.d.ts"],
-  "exclude": ["dist"]
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.d.ts"
+  ],
+  "exclude": [
+    "dist"
+  ]
 }

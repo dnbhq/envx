@@ -4,6 +4,8 @@
   },
   "test": {
     // Only include the Deno-specific test file
-    "include": ["deno.envx.test.ts"]
+    "include": [
+      "deno.envx.test.ts"
+    ]
   }
 }

@@ -1,4 +1,4 @@
-# envx - Cross-runtime Environment Variable Helper (Node.js · Deno · Bun)
+# envx - cross-runtime environment variable helper
 
 `envx` is an ESM utility for checking, validating, normalizing, and loading environment variables with no runtime dependencies.
 
@@ -91,6 +91,7 @@ await loadEnv({ paths: ["~/.env", ".env.local", ".env"], override: false });
 ```
 
 `loadEnv` behavior details:
+
 - Ignores blank lines and comment lines beginning with `#`.
 - Reads `KEY=value` pairs.
 - Trims keys and values.
@@ -106,6 +107,7 @@ npx envx --var DEBUG --type boolean --boolean-strict
 ```
 
 Arguments:
+
 - `--var` / `--name`: environment variable name (required)
 - `--type`: `string|int|integer|number|boolean`
 - `--pattern`: regex pattern (`text` or `/pattern/flags`)
@@ -159,4 +161,4 @@ deno test --allow-env --allow-read --allow-write
 
 ## License
 
-MIT
+[MIT License](LICENSE.md)
