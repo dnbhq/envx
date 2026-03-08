@@ -148,11 +148,6 @@ function fail(name: string, reason: string): never {
   throw new Error(msg);
 }
 
-function safeEcho(s: string): string {
-  const t = String(s);
-  return t.length > 16 ? t.slice(0, 16) + "…" : t;
-}
-
 /** Validate var and return coerced value. Throws on failure. */
 export function validateEnvVar(
   name: string,
@@ -169,15 +164,15 @@ export function validateEnvVar(
 
   if (t === "boolean") {
     const b = toBooleanStrict(raw, useStrict);
-    if (b === undefined) fail(name, `expected a boolean (got "${safeEcho(raw)}")`);
+    if (b === undefined) fail(name, "expected a boolean");
     value = b;
   } else if (t === "int" || t === "integer") {
     const n = parseIntStrict(raw);
-    if (n === undefined) fail(name, `expected an integer (got "${safeEcho(raw)}")`);
+    if (n === undefined) fail(name, "expected an integer");
     value = n;
   } else if (t === "number") {
     const n = parseNumberStrict(raw);
-    if (n === undefined) fail(name, `expected a number (got "${safeEcho(raw)}")`);
+    if (n === undefined) fail(name, "expected a number");
     value = n;
   } // string remains as-is (trimmed if enabled)
 

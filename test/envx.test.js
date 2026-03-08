@@ -103,6 +103,29 @@ test('getEnvVar defaults and optional', () => {
   assert.equal(getEnvVar('OPT4', { default: 'abc' }), 'xyz');
 });
 
+test('validation errors do not expose raw secret values', () => {
+  process.env.SECRET_BOOL = 'super-secret-value';
+  assert.throws(
+    () => validateEnvVar('SECRET_BOOL', { type: 'boolean', booleanStrict: true }),
+    (err) => {
+      assert.match(err.message, /expected a boolean/);
+      assert.doesNotMatch(err.message, /super-secret-value/);
+      return true;
+    }
+  );
+
+  process.env.SECRET_INT = '123abc-secret';
+  assert.throws(
+    () => validateEnvVar('SECRET_INT', { type: 'int' }),
+    (err) => {
+      assert.match(err.message, /expected an integer/);
+      assert.doesNotMatch(err.message, /123abc-secret/);
+      return true;
+    }
+  );
+});
+
+
 test('loadEnv loads kv pairs', async () => {
   const fs = await import('node:fs/promises');
   await fs.writeFile('.env.test', 'X=1\nY=foo bar\nZ=\"quoted value\"\\n\n# comment\n');

@@ -1,211 +1,161 @@
-# envx - Cross‑runtime Environment Variable Helper (Node.js · Deno · Bun)
+# envx - Cross-runtime Environment Variable Helper (Node.js · Deno · Bun)
 
-`envx` is a lightweight yet powerful ESM utility to **check**, **validate**, **sanitize**, and **load** environment variables across Node.js, Deno, and Bun - with **no external dependencies**.
+`envx` is an ESM utility for checking, validating, normalizing, and loading environment variables with no runtime dependencies.
 
 ## Features
 
-* Validate types: `string`, `integer`, `number`, `boolean`
-* Enforce constraints: min/max length, regex, enum array or function
-* Retrieve sanitized values with trimming and coercion
-* Provide optional defaults and optional/required semantics
-* Load `.env` from the current working directory and `$HOME` (opt‑in), without dotenv
-* Set global defaults once and apply them everywhere
-* Enable Boolean strict mode (`true|false` only)
-* Framework‑agnostic - works in CLIs and servers
-
+- Runtime support for Node.js, Deno, and Bun.
+- Validation types: `string`, `int`/`integer`, `number`, `boolean`.
+- Constraint checks: `pattern`, `minLength`, `maxLength`, `choices`, and custom `validate` callback.
+- Optional strict booleans (`true`/`false` only) or flexible boolean parsing (`true/false/1/0/yes/no/y/n/on/off`).
+- Default values and optional/required semantics via `getEnvVar`.
+- `.env` file loading with support for multiple files, user-home expansion (`~`), and optional override behavior.
+- Global configuration controls for verbose logging, default env file paths, trimming, and exit behavior.
+- CLI for one-off validation/lookup in Node/Bun environments.
 
 ## Installation
 
 ```bash
-# Node.js / Bun (ESM project)
 npm install @davidsneighbour/envx
+```
 
-# Deno: import directly from file path or hosted URL
+Deno usage is via source import:
+
+```ts
 import { getEnvVar } from "./src/envx.ts";
 ```
 
+## Core Use Cases
 
-## Quick Start
+- Validate required secrets/config at startup (`checkEnvVar`, `validateEnvVar`).
+- Parse runtime config into typed values (`PORT`, feature flags, rate limits).
+- Keep one consistent validation strategy across apps and scripts.
+- Load local and shared `.env` files without additional dotenv packages.
+- Use a command-line check in CI or shell scripts (`npx envx ...`).
 
-### ▶ Node.js / Bun
+## API
 
-```ts
-import { configureDefaults, getEnvVar, validateEnvVar, checkEnvVar, loadEnv } from "@davidsneighbour/envx";
+### `configureDefaults(overrides)`
 
-configureDefaults({
-  verbose: true,
-  envFilePaths: ["~/.env", ".env"],
-});
-
-await loadEnv();
-
-const PORT = getEnvVar("PORT", { type: "int", default: 3000 });
-const DEBUG = getEnvVar("DEBUG", { type: "boolean", default: false });
-
-validateEnvVar("NODE_ENV", { pattern: /^(development|production|test)$/ });
-checkEnvVar("API_KEY");
-```
-
-### ▶ Deno
-
-```ts
-// run with: deno run --allow-env --allow-read main.ts
-import { configureDefaults, loadEnv, getEnvVar } from "./src/envx.ts";
-
-configureDefaults({ verbose: true });
-
-await loadEnv({ paths: [".env"] });
-
-const port = getEnvVar("PORT", { type: "int", default: 8080 });
-console.log("Running on port", port);
-```
-
-
-## API Reference
-
-### `configureDefaults(options)`
-
-Set global behaviour applied to all calls.
+Merges global defaults.
 
 ```ts
 configureDefaults({
   verbose: false,
   exitOnError: false,
-  envFilePaths: [".env"],
+  envFilePaths: ["~/.env", ".env"],
   trimValues: true,
   coerceTypes: true,
   booleanStrict: false,
 });
 ```
 
+> Note: `coerceTypes` is currently part of the public config shape but coercion behavior is driven by per-call `type` options.
+
 ### `checkEnvVar(name, options?)`
 
-Ensure a variable exists (non‑empty unless `allowEmpty:true`). Throws on error.
+Ensures presence (and non-empty value unless `allowEmpty: true`). Throws on error.
 
 ```ts
-checkEnvVar("API_URL", { allowEmpty: false, message: "API_URL missing" });
+checkEnvVar("API_KEY");
+checkEnvVar("OPTIONAL_BUT_NOT_EMPTY", { required: false });
 ```
 
-### `validateEnvVar(name, options?) => value`
+### `validateEnvVar(name, options?)`
 
-Validate constraints and **return a coerced value** on success. Throws on failure.
-
-Examples:
+Returns a validated/coerced value or throws.
 
 ```ts
-// integer
-env.PORT = validateEnvVar("PORT", { type: "int" });
-
-// regex enforced string
-env.CODE = validateEnvVar("CODE", { pattern: /^[A-Z0-9]{8}$/ });
-
-// strict boolean
-env.DEBUG = validateEnvVar("DEBUG", { type: "boolean", booleanStrict: true });
+const port = validateEnvVar("PORT", { type: "int" });
+const envName = validateEnvVar("NODE_ENV", {
+  choices: ["development", "test", "production"],
+});
+const debug = validateEnvVar("DEBUG", { type: "boolean", booleanStrict: true });
 ```
 
-### `getEnvVar(name, options?) => value | undefined`
+### `getEnvVar(name, options?)`
 
-Retrieve, trim, coerce, and validate. If missing and `default` provided (or `required:false`), return the default/undefined.
+Returns validated/coerced value, default, or `undefined` when optional and missing.
 
 ```ts
-const token = getEnvVar("TOKEN", { pattern: /^[A-Za-z0-9_-]{20,}$/ });
-const port  = getEnvVar("PORT", { type: "int", default: 8080 });
-const debug = getEnvVar("DEBUG", { type: "boolean", required: false, default: false });
+const port = getEnvVar("PORT", { type: "int", default: 3000 });
+const debug = getEnvVar("DEBUG", { type: "boolean", required: false });
 ```
 
-### `loadEnv(options?)`
+### `loadEnv({ paths?, override? })`
 
-Load `.env` files and populate the runtime environment.
+Loads key/value entries from one or more `.env`-style files.
 
 ```ts
-await loadEnv({ paths: ["~/.env", ".env"], override: false });
+await loadEnv({ paths: ["~/.env", ".env.local", ".env"], override: false });
 ```
 
+`loadEnv` behavior details:
+- Ignores blank lines and comment lines beginning with `#`.
+- Reads `KEY=value` pairs.
+- Trims keys and values.
+- Supports surrounding single/double quotes for values.
+- Sets environment values only when missing unless `override: true`.
 
-## Boolean Strict Mode
-
-By default, booleans accept flexible values: `true/false/1/0/yes/no/y/n/on/off`.
-
-Enable strict mode to accept only `true` and `false` (case‑insensitive):
-
-```ts
-configureDefaults({ booleanStrict: true });
-
-// or per call
-getEnvVar("DEBUG", { type: "boolean", booleanStrict: true });
-```
-
-CLI example:
-
-```bash
-npx envx --var DEBUG --type boolean --boolean-strict
-```
-
-
-## CLI Usage
-
-### ▶ Node.js / Bun
+## CLI
 
 ```bash
 npx envx --var API_KEY --type string --pattern '^[A-Za-z0-9_-]{16,}$'
-
 npx envx --var PORT --type int --default 8080
-
 npx envx --var DEBUG --type boolean --boolean-strict
 ```
 
-### ▶ Deno (no CLI binary)
+Arguments:
+- `--var` / `--name`: environment variable name (required)
+- `--type`: `string|int|integer|number|boolean`
+- `--pattern`: regex pattern (`text` or `/pattern/flags`)
+- `--default`: fallback value
+- `--boolean-strict`: enforce `true|false` only
+- `--help`: show usage
 
-Run directly via `deno run` with the envx module:
+## Runtime Notes
 
-```bash
-deno run --allow-env --allow-read main.ts
-```
+- **Node.js / Bun**: uses `process.env`; `exitOnError` can call `process.exit(1)`.
+- **Deno**: uses `Deno.env`; requires `--allow-env` and `--allow-read` for `loadEnv`.
+- **Fallback/unknown runtime**: uses in-memory map for get/set behavior.
+- **Browser use**: no browser-specific integration is provided.
 
+## Privacy & Safety Review
 
-## Build & Publish (Node.js / Bun)
+The codebase was reviewed for environment-secret handling and misuse risks.
+
+### Confirmed protections
+
+- Validation errors identify variable names but do not include raw failing values for type errors, reducing accidental secret leakage in logs.
+- `checkEnvVar` and shared failure paths throw errors (fail-fast) and optionally log only the error message.
+- `.env` loading is local file based; there is no network I/O.
+
+### Important operational caveats
+
+- Variable names can still be sensitive in some organizations; avoid exposing naming conventions in public logs if that matters.
+- `verbose: true` sends error messages to stderr; keep this disabled in high-sensitivity production logs unless required.
+- `loadEnv` trusts file content and does not validate key names against a strict schema; validate variables after loading.
+- The CLI prints resolved values to stdout by design; do not use it where stdout is persisted for secrets.
+
+### Recommended usage pattern
+
+1. `await loadEnv(...)` early in startup.
+2. Validate all required values with explicit constraints.
+3. Convert booleans in strict mode for production configs where ambiguity is risky.
+4. Keep `verbose` off in production unless actively debugging.
+
+## Development
 
 ```bash
 npm run build
 npm test
-npm publish --access public
 ```
 
-
-## Cross‑Runtime Notes
-
-* **Node.js**: uses `process.env`. Reads `.env` synchronously at startup. ESM only.
-* **Deno**: uses `Deno.env`. Requires `--allow-env` and `--allow-read`. Import directly from file/URL.
-* **Bun**: uses `process.env` or `Bun.env`. Bun automatically loads `.env*` files.
-* **Browsers**: not supported.
-
-
-## Testing
-
-### ▶ Node.js
-
-```bash
-npm test
-```
-
-### ▶ Deno
+Optional:
 
 ```bash
 deno test --allow-env --allow-read --allow-write
 ```
-
-### ▶ Bun
-
-```bash
-bun test
-```
-
-
-## Security & Logging
-
-* Errors include variable names but not values, preventing accidental leaks.
-* `verbose:true` writes errors to stderr. Throwing remains the primary failure mechanism.
-
 
 ## License
 
