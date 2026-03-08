@@ -16,7 +16,9 @@
     }
   },
   "types": "dist/envx.d.ts",
-  "files": ["dist/"],
+  "files": [
+    "dist/"
+  ],
   "bin": {
     "envx": "dist/bin/envx.mjs"
   },

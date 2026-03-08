@@ -2,14 +2,15 @@
   "compilerOptions": {
     "target": "ES2022",
     "lib": [
-      "ES2022"
+      "ES2022",
+      "DOM"
     ],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "outDir": "dist",
     "declaration": true,
     "declarationMap": false,
-    "emitDeclarationOnly": false,
+    "emitDeclarationOnly": true,
     "sourceMap": false,
     "removeComments": false,
     "noEmitOnError": true,
@@ -21,6 +22,7 @@
     "useUnknownInCatchVariables": true,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
     "types": [
       "node"
     ]

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { configureDefaults, getEnvVar } from "../envx.js";
+import { configureDefaults, getEnvVar } from "../envx.ts";
 
 type ArgMap = Record<string, string | boolean>;
 
