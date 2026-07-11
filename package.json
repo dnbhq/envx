@@ -1,6 +1,6 @@
 {
   "name": "@davidsneighbour/envx",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Cross-runtime environment variable helper (Node.js, Deno, Bun). ESM-only, no deps (yet)",
   "type": "module",
   "license": "MIT",
@@ -20,7 +20,7 @@
     "dist/"
   ],
   "bin": {
-    "envx": "dist/bin/envx.mjs"
+    "envx": "dist/bin/envx.js"
   },
   "scripts": {
     "clean": "rm -rf dist",
@@ -34,6 +34,7 @@
     "node": ">=18.17"
   },
   "devDependencies": {
-    "@types/node": "25.3.5"
+    "@types/node": "25.3.5",
+    "typescript": "6.0.3"
   }
 }

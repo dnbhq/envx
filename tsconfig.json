@@ -8,9 +8,10 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "outDir": "dist",
+    "rootDir": "src",
     "declaration": true,
     "declarationMap": false,
-    "emitDeclarationOnly": true,
+    "emitDeclarationOnly": false,
     "sourceMap": false,
     "removeComments": false,
     "noEmitOnError": true,
@@ -23,6 +24,7 @@
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
     "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
     "types": [
       "node"
     ]
