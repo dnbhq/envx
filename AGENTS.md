@@ -5,7 +5,7 @@ working in this repository. It is the single source of truth for agent instructi
 
 ## What this is
 
-`envx` (`@davidsneighbour/envx`) is a small, dependency-free ESM library for checking, validating,
+`envx` (`@dnbhq/envx`) is a small, dependency-free ESM library for checking, validating,
 coercing, and loading environment variables, portable across Node.js, Deno, and Bun. It also ships
 a CLI (`envx`) for one-off env var checks in shell scripts / CI.
 

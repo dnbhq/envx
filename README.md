@@ -16,7 +16,7 @@
 ## Installation
 
 ```bash
-npm install @davidsneighbour/envx
+npm install @dnbhq/envx
 ```
 
 Deno usage is via source import:
