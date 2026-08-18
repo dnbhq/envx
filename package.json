@@ -1,5 +1,5 @@
 {
-  "name": "@davidsneighbour/envx",
+  "name": "@dnbhq/envx",
   "version": "0.0.2",
   "description": "Cross-runtime environment variable helper (Node.js, Deno, Bun). ESM-only, no deps (yet)",
   "type": "module",
@@ -7,7 +7,7 @@
   "author": "Patrick Kollitsch (David's Neighbour)",
   "repository": {
     "type": "git",
-    "url": "https://github.com/davidsneighbour/envx.git"
+    "url": "https://github.com/dnbhq/envx.git"
   },
   "exports": {
     ".": {
