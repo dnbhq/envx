@@ -1,0 +1,7 @@
+{
+  "$schema": "./node-version-policy.schema.json",
+  "policy": "active-latest",
+  "packageType": "library",
+  "includeAllActiveLts": true,
+  "includeCurrentForLibraries": true
+}

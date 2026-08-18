@@ -159,6 +159,27 @@ Optional:
 deno test --allow-env --allow-read --allow-write
 ```
 
+### Node.js version policy
+
+envx follows the **active-latest** Node.js policy: it targets every currently active Node.js
+release line (LTS and Current), dropping a line once it reaches end-of-life. The policy is
+recorded in [.github/node-version-policy.json](.github/node-version-policy.json) and enforced by
+a weekly [check-node-version-policy](.github/workflows/check-node-version-policy.yml) workflow,
+which fails when `package.json#engines.node` or the CI matrix drifts from the official
+[Node.js release schedule](https://github.com/nodejs/Release).
+
+Check locally with:
+
+```bash
+node scripts/check-node-version-policy.mjs --check
+```
+
+Apply any needed updates with:
+
+```bash
+node scripts/check-node-version-policy.mjs --write
+```
+
 ## License
 
 [MIT License](LICENSE.md)
