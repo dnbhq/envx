@@ -84,9 +84,9 @@ objects conditionally (see `src/bin/envx.ts`'s `opts` construction) works around
 ## Workflow
 
 - Work only on `main` unless explicitly told to use a branch.
-- Every commit must reference a GitHub issue. If no relevant issue exists, create one first; if one
-  already exists, work from it. After the work is done, add a comment to that issue explaining what
-  was actually done (not just what was planned).
+- Every commit must reference a GitHub issue, except WIP commits. If no relevant issue exists, create
+  one first; if one already exists, work from it. After the work is done, add a comment to that issue
+  explaining what was actually done (not just what was planned).
 - Commit after every completed task rather than batching multiple tasks into one commit.
 
 ## Distribution
