@@ -1,0 +1,26 @@
+name: Node version policy check
+
+on:
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Check Node.js version declarations
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check Node.js version policy
+        run: node scripts/check-node-version-policy.mjs --check --verbose
+      - name: Summary
+        if: always()
+        run: node scripts/check-node-version-policy.mjs --format=json >> "$GITHUB_STEP_SUMMARY" || true
