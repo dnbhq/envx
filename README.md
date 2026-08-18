@@ -9,8 +9,8 @@
 - Constraint checks: `pattern`, `minLength`, `maxLength`, `choices`, and custom `validate` callback.
 - Optional strict booleans (`true`/`false` only) or flexible boolean parsing (`true/false/1/0/yes/no/y/n/on/off`).
 - Default values and optional/required semantics via `getEnvVar`.
-- `.env` file loading with support for multiple files, user-home expansion (`~`), and optional override behavior.
-- Global configuration controls for verbose logging, default env file paths, trimming, and exit behavior.
+- `.env` file loading with support for multiple files, user-home expansion (`~`), and optional override behaviour.
+- Global configuration controls for verbose logging, default env file paths, trimming, and exit behaviour.
 - CLI for one-off validation/lookup in Node/Bun environments.
 
 ## Installation
@@ -50,7 +50,7 @@ configureDefaults({
 });
 ```
 
-> Note: `coerceTypes` is currently part of the public config shape but coercion behavior is driven by per-call `type` options.
+> Note: `coerceTypes` is currently part of the public config shape but coercion behaviour is driven by per-call `type` options.
 
 ### `checkEnvVar(name, options?)`
 
@@ -90,7 +90,7 @@ Loads key/value entries from one or more `.env`-style files.
 await loadEnv({ paths: ["~/.env", ".env.local", ".env"], override: false });
 ```
 
-`loadEnv` behavior details:
+`loadEnv` behaviour details:
 
 - Ignores blank lines and comment lines beginning with `#`.
 - Reads `KEY=value` pairs.
@@ -119,7 +119,7 @@ Arguments:
 
 - **Node.js / Bun**: uses `process.env`; `exitOnError` can call `process.exit(1)`.
 - **Deno**: uses `Deno.env`; requires `--allow-env` and `--allow-read` for `loadEnv`.
-- **Fallback/unknown runtime**: uses in-memory map for get/set behavior.
+- **Fallback/unknown runtime**: uses in-memory map for get/set behaviour.
 - **Browser use**: no browser-specific integration is provided.
 
 ## Privacy & Safety Review

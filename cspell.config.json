@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "version": "0.2",
+  "import": ["@cspell/dict-en-gb/cspell-ext.json"],
+  "language": "en-GB",
+  "dictionaryDefinitions": [
+    {
+      "name": "workspace",
+      "path": "./.vscode/dictionary.txt",
+      "addWords": true
+    }
+  ],
+  "dictionaries": ["workspace"],
+  "ignorePaths": ["dist/**", "node_modules/**", "package-lock.json", ".git/**"]
+}

@@ -1,13 +1,36 @@
 {
   "name": "@dnbhq/envx",
-  "version": "0.0.2",
   "description": "Cross-runtime environment variable helper (Node.js, Deno, Bun). ESM-only, no deps (yet)",
-  "type": "module",
+  "version": "0.0.2",
   "license": "MIT",
-  "author": "Patrick Kollitsch (David's Neighbour)",
   "repository": {
     "type": "git",
     "url": "https://github.com/dnbhq/envx.git"
+  },
+  "author": "Patrick Kollitsch (David's Neighbour)",
+  "devDependencies": {
+    "@cspell/dict-en-gb": "5.0.30",
+    "@types/node": "26.2.0",
+    "cspell": "10.0.1",
+    "typescript": "7.0.2"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check:spelling": "cspell --no-progress .",
+    "clean": "rm -rf dist",
+    "prepare": "npm run build",
+    "pretest": "npm run build",
+    "test": "node --test --test-reporter=spec \"test/**/*.js\"",
+    "test:watch": "node --test --watch \"test/**/*.js\""
+  },
+  "files": [
+    "dist/"
+  ],
+  "bin": {
+    "envx": "dist/bin/envx.js"
+  },
+  "engines": {
+    "node": "^22.0.0 || ^24.0.0 || ^26.0.0"
   },
   "exports": {
     ".": {
@@ -15,26 +38,6 @@
       "import": "./dist/envx.js"
     }
   },
-  "types": "dist/envx.d.ts",
-  "files": [
-    "dist/"
-  ],
-  "bin": {
-    "envx": "dist/bin/envx.js"
-  },
-  "scripts": {
-    "clean": "rm -rf dist",
-    "build": "tsc -p tsconfig.json",
-    "pretest": "npm run build",
-    "test": "node --test --test-reporter=spec \"test/**/*.js\"",
-    "test:watch": "node --test --watch \"test/**/*.js\"",
-    "prepare": "npm run build"
-  },
-  "engines": {
-    "node": "^22.0.0 || ^24.0.0 || ^26.0.0"
-  },
-  "devDependencies": {
-    "@types/node": "26.2.0",
-    "typescript": "7.0.2"
-  }
+  "type": "module",
+  "types": "dist/envx.d.ts"
 }

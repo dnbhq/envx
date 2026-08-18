@@ -67,7 +67,7 @@ but deliberately **never include the raw offending value** — this is a documen
 (see README "Privacy & Safety Review"). If you touch `fail()` or `checkEnvVar`'s error paths, preserve
 this: never interpolate the raw env value into a thrown message.
 
-### `exitOnError` behavior
+### `exitOnError` behaviour
 
 When `config.exitOnError` is true, failures call `process.exit(1)` — but only when
 `envAccessor.runtime === "nodelike"`. This is a deliberate runtime guard; Deno and the in-memory
