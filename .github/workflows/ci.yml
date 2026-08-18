@@ -31,3 +31,15 @@ jobs:
       - uses: denoland/setup-deno@v2
       - run: deno install
       - run: deno test --allow-env --allow-read --allow-write
+
+  audit:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm audit --audit-level=high
