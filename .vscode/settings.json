@@ -1,0 +1,5 @@
+{
+  "explorer.fileNesting.patterns": {
+    "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb, bun.lock, deno.jsonc, cspell.config.*, deno.*"
+  }
+}
