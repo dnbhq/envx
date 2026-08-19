@@ -178,7 +178,10 @@ export function validateEnvVar(
 
   if (options.pattern) {
     const s = typeof value === "string" ? value : String(raw);
-    if (!options.pattern.test(s)) fail(name, `does not match pattern ${String(options.pattern)}`);
+    const pattern = options.pattern.global || options.pattern.sticky
+      ? new RegExp(options.pattern.source, options.pattern.flags.replace(/[gy]/g, ""))
+      : options.pattern;
+    if (!pattern.test(s)) fail(name, `does not match pattern ${String(options.pattern)}`);
   }
 
   if (typeof value === "string") {

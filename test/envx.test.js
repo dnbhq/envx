@@ -90,6 +90,14 @@ test('pattern, length, choices, custom', () => {
   );
 });
 
+test('validateEnvVar reuses a global-flag pattern across calls without stateful lastIndex', () => {
+  process.env.GLOBAL_PATTERN_A = 'abc123';
+  process.env.GLOBAL_PATTERN_B = 'abc123';
+  const pattern = /^[a-z]+\d+$/g;
+  assert.equal(validateEnvVar('GLOBAL_PATTERN_A', { pattern }), 'abc123');
+  assert.equal(validateEnvVar('GLOBAL_PATTERN_B', { pattern }), 'abc123');
+});
+
 test('getEnvVar defaults and optional', () => {
   delete process.env.OPT1;
   assert.equal(getEnvVar('OPT1', { required: false }), undefined);
