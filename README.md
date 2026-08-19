@@ -140,7 +140,21 @@ The codebase was reviewed for environment-secret handling and misuse risks.
 - `verbose: true` sends error messages to stderr; keep this disabled in high-sensitivity production logs unless required.
 - `loadEnv` trusts file content and does not validate key names against a strict schema; validate variables after loading.
 - `loadEnv`'s `paths` option must always be developer/deployment-controlled, never derived from user input or request data. `loadEnv` reads whatever local files it's pointed at and sets any key it finds in them into the process/Deno env with no name validation — untrusted `paths` or untrusted file contents are effectively an arbitrary file read + env-variable-injection primitive.
-- The CLI prints resolved values to stdout by design; do not use it where stdout is persisted for secrets.
+- The CLI prints resolved values to stdout by design; do not use it where stdout is persisted for secrets. Most CI systems do **not** auto-mask arbitrary command output — a value only becomes a masked secret once the pipeline explicitly registers it as one. Without an explicit masking step, a resolved value piped from the CLI into a captured/logged CI step appears in plaintext in the job log:
+
+  ```yaml
+  # GitHub Actions: register the value as a masked secret before it's used/logged
+  - run: echo "::add-mask::$(npx envx --var API_KEY)"
+  ```
+
+  ```yaml
+  # GitLab CI: GitLab only masks values known ahead of time, via Settings > CI/CD >
+  # Variables with "Mask variable" enabled — it has no runtime "mask this now" step for
+  # values computed inside a job. Prefer having the value already set as a masked CI/CD
+  # variable rather than resolving it with the CLI and echoing/exporting it in a job.
+  ```
+
+  When no equivalent runtime-masking primitive exists for your CI system, avoid running the CLI in a way that puts the resolved value into persisted/captured output at all.
 
 ### Recommended usage pattern
 
