@@ -236,17 +236,20 @@ export function getEnvVar(
       if (options.type === "boolean") {
         if (typeof def === "boolean") return def;
         const b = toBooleanStrict(String(def), useStrict);
-        return b === undefined ? (def as any) : b;
+        if (b === undefined) fail(name, "has a default value that could not be coerced to boolean");
+        return b;
       }
       if (options.type === "int" || options.type === "integer") {
         if (typeof def === "number" && Number.isInteger(def)) return def;
         const n = parseIntStrict(String(def));
-        return n === undefined ? (def as any) : n;
+        if (n === undefined) fail(name, "has a default value that could not be coerced to an integer");
+        return n;
       }
       if (options.type === "number") {
         if (typeof def === "number") return def;
         const n = parseNumberStrict(String(def));
-        return n === undefined ? (def as any) : n;
+        if (n === undefined) fail(name, "has a default value that could not be coerced to a number");
+        return n;
       }
       return typeof def === "string" && config.trimValues ? def.trim() : (def as any);
     }

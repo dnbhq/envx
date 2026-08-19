@@ -112,6 +112,26 @@ test('getEnvVar defaults and optional', () => {
   assert.equal(getEnvVar('OPT4', { default: 'abc' }), 'xyz');
 });
 
+test('getEnvVar throws when a typed default cannot be coerced', () => {
+  delete process.env.OPT5;
+  assert.throws(
+    () => getEnvVar('OPT5', { type: 'int', default: 'not-a-number' }),
+    /could not be coerced to an integer/
+  );
+
+  delete process.env.OPT6;
+  assert.throws(
+    () => getEnvVar('OPT6', { type: 'number', default: 'not-a-number' }),
+    /could not be coerced to a number/
+  );
+
+  delete process.env.OPT7;
+  assert.throws(
+    () => getEnvVar('OPT7', { type: 'boolean', booleanStrict: true, default: 'not-a-boolean' }),
+    /could not be coerced to boolean/
+  );
+});
+
 test('validation errors do not expose raw secret values', () => {
   process.env.SECRET_BOOL = 'super-secret-value';
   assert.throws(

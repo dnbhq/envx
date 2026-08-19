@@ -75,7 +75,9 @@ const debug = validateEnvVar("DEBUG", { type: "boolean", booleanStrict: true });
 
 ### `getEnvVar(name, options?)`
 
-Returns validated/coerced value, default, or `undefined` when optional and missing.
+Returns validated/coerced value, default, or `undefined` when optional and missing. If `type` is
+`"int"`, `"number"`, or `"boolean"` and the supplied `default` can't be coerced to that type, throws
+rather than returning an uncoerced value.
 
 ```ts
 const port = getEnvVar("PORT", { type: "int", default: 3000 });
