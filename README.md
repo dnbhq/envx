@@ -98,6 +98,8 @@ await loadEnv({ paths: ["~/.env", ".env.local", ".env"], override: false });
 - Reads `KEY=value` pairs.
 - Trims keys and values.
 - Supports surrounding single/double quotes for values.
+- Double-quoted values interpret `\n`, `\r`, `\t`, `\\`, and `\"` escape sequences; single-quoted values are literal (no escape processing).
+- Content after a value's closing quote is ignored (not appended to the value); a verbose-mode warning is logged when this happens.
 - Sets environment values only when missing unless `override: true`.
 
 ## CLI

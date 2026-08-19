@@ -291,6 +291,24 @@ function expandHome(p: string): string {
   return home + (needsSep ? sep : "") + rest;
 }
 
+/** Interpret backslash escape sequences inside a double-quoted .env value. */
+function unescapeDoubleQuoted(s: string): string {
+  let out = "";
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (c === "\\" && i + 1 < s.length) {
+      const next = s[i + 1];
+      if (next === "n") { out += "\n"; i++; continue; }
+      if (next === "r") { out += "\r"; i++; continue; }
+      if (next === "t") { out += "\t"; i++; continue; }
+      if (next === "\\") { out += "\\"; i++; continue; }
+      if (next === '"') { out += '"'; i++; continue; }
+    }
+    out += c;
+  }
+  return out;
+}
+
 /**
  * Load .env-like files; returns loaded key->value map.
  *
@@ -331,8 +349,11 @@ export async function loadEnv(
         const end = val.indexOf(q, 1);
         if (end > 0) {
           const inner = val.slice(1, end);
-          const rest = val.slice(end + 1).trim(); // keep trailing content like \n
-          val = inner + rest;
+          const rest = val.slice(end + 1).trim();
+          if (rest && config.verbose) {
+            console.error(`envx: loadEnv: ignoring trailing content after closing quote for key "${key}"`);
+          }
+          val = q === '"' ? unescapeDoubleQuoted(inner) : inner;
         }
       }
 

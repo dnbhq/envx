@@ -157,14 +157,40 @@ test('validation errors do not expose raw secret values', () => {
 
 test('loadEnv loads kv pairs', async () => {
   const fs = await import('node:fs/promises');
-  await fs.writeFile('.env.test', 'X=1\nY=foo bar\nZ=\"quoted value\"\\n\n# comment\n');
+  await fs.writeFile('.env.test', 'X=1\nY=foo bar\nZ="quoted value"\n# comment\n');
   try {
     const out = await loadEnv({ paths: '.env.test' });
     assert.equal(process.env.X, '1');
     assert.equal(process.env.Y, 'foo bar');
-    assert.equal(process.env.Z, 'quoted value\\n');
-    assert.deepEqual(out, { X: '1', Y: 'foo bar', Z: 'quoted value\\n' });
+    assert.equal(process.env.Z, 'quoted value');
+    assert.deepEqual(out, { X: '1', Y: 'foo bar', Z: 'quoted value' });
   } finally {
     await fs.rm('.env.test', { force: true });
+  }
+});
+
+test('loadEnv interprets escape sequences in double-quoted values but not single-quoted', async () => {
+  const fs = await import('node:fs/promises');
+  await fs.writeFile(
+    '.env.escape.test',
+    'DQ="line1\\nline2\\ttabbed"\nSQ=\'line1\\nline2\'\n'
+  );
+  try {
+    const out = await loadEnv({ paths: '.env.escape.test', override: true });
+    assert.equal(out.DQ, 'line1\nline2\ttabbed');
+    assert.equal(out.SQ, 'line1\\nline2');
+  } finally {
+    await fs.rm('.env.escape.test', { force: true });
+  }
+});
+
+test('loadEnv ignores trailing content after a value\'s closing quote', async () => {
+  const fs = await import('node:fs/promises');
+  await fs.writeFile('.env.trailing.test', 'KEY="value"trailing\n');
+  try {
+    const out = await loadEnv({ paths: '.env.trailing.test', override: true });
+    assert.equal(out.KEY, 'value');
+  } finally {
+    await fs.rm('.env.trailing.test', { force: true });
   }
 });
