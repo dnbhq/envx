@@ -3,6 +3,10 @@ import { configureDefaults, getEnvVar } from "../envx.ts";
 
 type ArgMap = Record<string, string | boolean>;
 
+// Defensive cap on --pattern length to limit the blast radius if this CLI is ever invoked
+// with a pattern from a less-trusted source than a developer/CI operator typing it directly.
+const MAX_PATTERN_LENGTH = 200;
+
 function parseArgs(argv: string[]): ArgMap {
   const out: ArgMap = {};
   for (const a of argv) {
@@ -63,7 +67,12 @@ function toRegExp(input?: string | boolean): RegExp | undefined {
   }
 
   const type = (args["type"] as string) || undefined;
-  const pattern = toRegExp(args["pattern"]);
+  const patternArg = args["pattern"];
+  if (typeof patternArg === "string" && patternArg.length > MAX_PATTERN_LENGTH) {
+    console.error(`--pattern exceeds the maximum allowed length of ${MAX_PATTERN_LENGTH} characters`);
+    process.exit(2);
+  }
+  const pattern = toRegExp(patternArg);
   const defv = (args["default"] as string) ?? undefined;
   const booleanStrict = !!args["boolean-strict"];
 

@@ -112,7 +112,9 @@ Arguments:
 
 - `--var` / `--name`: environment variable name (required)
 - `--type`: `string|int|integer|number|boolean`
-- `--pattern`: regex pattern (`text` or `/pattern/flags`)
+- `--pattern`: regex pattern (`text` or `/pattern/flags`), max 200 characters. Must only ever come
+  from a trusted source (same caveat as `loadEnv`'s `paths`) — it's compiled directly into a
+  `RegExp` with no ReDoS protection beyond the length cap.
 - `--default`: fallback value
 - `--boolean-strict`: enforce `true|false` only
 - `--help`: show usage
@@ -155,6 +157,7 @@ The codebase was reviewed for environment-secret handling and misuse risks.
   ```
 
   When no equivalent runtime-masking primitive exists for your CI system, avoid running the CLI in a way that puts the resolved value into persisted/captured output at all.
+- The CLI's `--pattern` must always be developer/deployment-controlled, never derived from user input or request data. It's compiled directly into a `RegExp` (capped at 200 characters as a defensive measure) with no ReDoS protection beyond that cap, so an untrusted pattern tested against an untrusted value could still hang the process. For direct, developer-invoked CLI usage this is low risk; it matters only if this CLI is ever wrapped by something that accepts a pattern from a less-trusted source.
 
 ### Recommended usage pattern
 
