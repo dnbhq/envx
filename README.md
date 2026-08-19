@@ -139,6 +139,7 @@ The codebase was reviewed for environment-secret handling and misuse risks.
 - Variable names can still be sensitive in some organizations; avoid exposing naming conventions in public logs if that matters.
 - `verbose: true` sends error messages to stderr; keep this disabled in high-sensitivity production logs unless required.
 - `loadEnv` trusts file content and does not validate key names against a strict schema; validate variables after loading.
+- `loadEnv`'s `paths` option must always be developer/deployment-controlled, never derived from user input or request data. `loadEnv` reads whatever local files it's pointed at and sets any key it finds in them into the process/Deno env with no name validation — untrusted `paths` or untrusted file contents are effectively an arbitrary file read + env-variable-injection primitive.
 - The CLI prints resolved values to stdout by design; do not use it where stdout is persisted for secrets.
 
 ### Recommended usage pattern

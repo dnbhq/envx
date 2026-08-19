@@ -291,7 +291,14 @@ function expandHome(p: string): string {
   return home + (needsSep ? sep : "") + rest;
 }
 
-/** Load .env-like files; returns loaded key->value map. */
+/**
+ * Load .env-like files; returns loaded key->value map.
+ *
+ * `paths` must always be developer/deployment-controlled, never derived from user input or
+ * request data — this reads arbitrary local files and sets whatever key=value pairs it finds
+ * into the process/Deno env with no name validation, so untrusted paths or file contents are
+ * effectively an arbitrary file read + env-injection primitive.
+ */
 export async function loadEnv(
   options: { paths?: string | string[]; override?: boolean } = {}
 ): Promise<Record<string, string>> {
